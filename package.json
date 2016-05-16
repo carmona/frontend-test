@@ -1,10 +1,11 @@
 {
   "name": "R7FrontendTest",
+  "author": "Filipe Carmona",
   "version": "0.0.1",
   "scripts": {
     "start": "node app.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "connect": "~3.1.1",
     "serve-static": "~1.5.3"
   }
