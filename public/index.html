@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" ng-app="r7test">
   <head>
     <meta charset="UTF-8">
 
@@ -19,14 +19,32 @@
             <h1 id="titulo">RANKING</h1>
           </div>
       	</header>
-      	<section id="ranking" class="white-bg round-corners">
+      	<section id="ranking" class="white-bg round-corners" ng-controller="MainCtrl as MC">
       		<ul id="rank-list">
-
+            <li class="rank-item" ng-repeat="item in MC.rankItems | orderBy:'-positivePercentage'">
+              <div class="rank-item-avatar-box">
+                <div class="rank-item-avatar">
+                  <img class="rank-item-pic" src="{{item.picture}}">
+                  <span class="rank-item-position">{{$index+1}}</span>
+                </div>
+              </div>
+              <div class="rank-item-text-box">
+                <h3 class="rank-item-name">{{item.name}}</h3>
+                <span class="rank-item-description">{{item.description}}</span>
+              </div>
+              <div class="hover-info"><div class="hover-info-column left">
+                <p class="key">GOSTAM</p><p class="value">{{item.positivePercentage}}%</p>
+              </div><div class="hover-info-column right">
+                  <p class="key">NÃO GOSTAM</p>
+                  <p class="value">{{item.negativePercentage}}%</p>
+                </div>
+              </div>
+            </li>
       		</ul>
       	</section>
 
 
       </main>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
     <script src="javascripts/main.js"></script>
 </html>

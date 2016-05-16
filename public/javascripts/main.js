@@ -15,73 +15,42 @@ WebFontConfig = {
 // your code
 (function(){
 
-  var rankItems = [];
-  var localURL = window.location.origin;
-  var httpRequest = new XMLHttpRequest();
+  angular.module("r7test",[]);
+  angular.module("r7test").controller("MainCtrl", MainCtrl);
 
-  httpRequest.onreadystatechange = parseData;
-  httpRequest.open('GET', localURL+'/fazenda.json');
-  httpRequest.send();
+  MainCtrl.$inject = ['$http','$window','$sce'];
+  function MainCtrl($http, $window, $sce) {
+    var thisCtrl = this;
+    this.rankItems = [];
+    var localURL = $window.location.origin;
 
-  function parseData() {
-    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-      if (httpRequest.status === 200) {
-        rankItems = JSON.parse(httpRequest.responseText).data;
-        sortItems();
-        renderItems();
-      } else {
-        alert('Houve um problema com a conexão ou seu navegador. Por favor, tente novamente.');
-      }
-    }
-  }
-
-  function sortItems() {
-    rankItems.forEach(function(item){
-      item.score = item.negativePercentage = item.positivePercentage = 0;
-
-      if(item.positive && item.negative){
-        item.negative = item.negative*1;
-        item.positive = item.positive*1;
-        item.total = item.negative + item.positive;
-        item.negativePercentage = (item.negative / item.total).toFixed(2) * 100;
-        item.positivePercentage = (item.positive / item.total).toFixed(2) * 100;
-      }
-
+    $http({
+      method: 'GET',
+      url: localURL+'/fazenda.json'
+    }).then(function success(response){
+      thisCtrl.rankItems = thisCtrl.sortItems(response.data.data);
+    }, function error(response){
+      alert('Houve um problema com a conexão ou seu navegador. Por favor, tente novamente.');
     });
-    rankItems = rankItems.sort(function(a,b){return b.positivePercentage-a.positivePercentage});
-  }
 
-  function renderItems(){
-    var templateRequest = new XMLHttpRequest();
-    var templateString = "";
-    var listElem = document.querySelector('#rank-list');
-    templateRequest.onreadystatechange = parseTemplate;
-    templateRequest.open('GET', localURL+'/partial-rank-item.html');
-    templateRequest.send();
+    this.sortItems = function sortItems(items){
+      items.forEach(function(item){
+        item.negativePercentage = item.positivePercentage = 0;
 
-    function parseTemplate() {
-      if (templateRequest.readyState === XMLHttpRequest.DONE) {
-        if (templateRequest.status === 200) {
-          templateString = templateRequest.responseText;
-          iterateItems();
-        } else {
-          alert('Houve um problema com a conexão ou seu navegador. Por favor, tente novamente.');
+        var txt = document.createElement("textarea");
+        txt.innerHTML = item.description;
+        item.description = txt.value;
+
+        if(item.positive && item.negative){
+          item.negative = item.negative*1;
+          item.positive = item.positive*1;
+          item.total = item.negative + item.positive;
+          item.negativePercentage = (item.negative / item.total).toFixed(2) * 100;
+          item.positivePercentage = (item.positive / item.total).toFixed(2) * 100;
         }
-      }
-    }
 
-    function iterateItems() {
-      console.time('render foreach');
-      rankItems.forEach(function(item, index){
-        var thisString = templateString.replace('{{picture}}',item.picture)
-                            .replace('{{position}}',index+1)
-                            .replace('{{name}}',item.name)
-                            .replace('{{description}}',item.description)
-                            .replace('{{positivePercentage}}',item.positivePercentage)
-                            .replace('{{negativePercentage}}',item.negativePercentage);
-        listElem.innerHTML += thisString;
       });
-      console.timeEnd('render foreach');
-    }
+      return items;
+    };
   }
 })();
