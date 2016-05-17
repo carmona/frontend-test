@@ -22,7 +22,7 @@ WebFontConfig = {
   function MainCtrl($http, $window, $sce) {
     var thisCtrl = this;
     this.rankItems = [];
-    var localURL = $window.location.origin;
+    var localURL = $window.location.hostname + $window.location.pathname;
 
     $http({
       method: 'GET',
