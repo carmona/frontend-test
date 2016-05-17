@@ -22,11 +22,11 @@ WebFontConfig = {
   function MainCtrl($http, $window, $sce) {
     var thisCtrl = this;
     this.rankItems = [];
-    var localURL = $window.location.hostname + $window.location.pathname;
+    var fileURL = $window.location.origin + $window.location.pathname+'fazenda.json';
 
     $http({
       method: 'GET',
-      url: localURL+'/fazenda.json'
+      url: fileURL
     }).then(function success(response){
       thisCtrl.rankItems = thisCtrl.sortItems(response.data.data);
     }, function error(response){
